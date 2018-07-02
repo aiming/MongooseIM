@@ -14,8 +14,10 @@ crud_tests() ->
 
 
 init_per_testcase(_, Config) ->
-    start_riak_connector(),
-    Config.
+    case start_riak_connector() of
+        ok -> Config;
+        not_available -> {skip, riak_server_not_available}
+    end.
 
 end_per_testcase(_, Config) ->
     stop_riak_connector(),
@@ -37,7 +39,11 @@ simple_crud(_) ->
 start_riak_connector() ->
     meck:new(ejabberd_config, []),
     meck:expect(ejabberd_config, get_local_option, fun(riak_server) -> riak_config() end),
-    mongoose_riak:start().
+    mongoose_riak:start(),
+    case mongoose_riak:list_buckets(<<"default">>) of
+        {ok, _} -> ok;
+        {error, disconnected} -> not_available
+    end.
 
 stop_riak_connector() ->
     mongoose_riak:stop(),
