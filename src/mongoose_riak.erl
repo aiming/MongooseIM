@@ -68,7 +68,7 @@ start_pool(RiakOpts) ->
     SecurityOpts = [get_riak_opt(OptKey, RiakOpts) || OptKey <- SecurityOptsKeys],
     RiakPBOpts = [auto_reconnect, keepalive],
     WorkerArgs = maybe_add_additional_opts(RiakPBOpts, SecurityOpts),
-    Worker = {riak_pb_socket, [RiakAddr, RiakPort, WorkerArgs]},
+    Worker = {riakc_pb_socket, [RiakAddr, RiakPort, WorkerArgs]},
     PoolOpts = [{workers, Workers},
                 {worker, Worker}]
                 ++  proplists:get_value(pool_options, RiakOpts, []),
