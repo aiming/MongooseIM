@@ -2600,10 +2600,19 @@ add_message_to_history(FromNick, FromJID, Packet, StateData) ->
     Q1 = lqueue_in({FromNick, TSPacket, HaveSubject, TimeStamp, Size},
            StateData#state.history),
     add_to_log(text, {FromNick, Packet}, StateData),
+    output_message_to_log(FromJID, StateData#state.jid, Packet),
     ejabberd_hooks:run(room_packet, StateData#state.host,
                        [FromNick, FromJID, StateData#state.jid, Packet]),
     StateData#state{history = Q1}.
 
+-spec output_message_to_log(jid:jid(), jid:jid(), exml:element()) -> 'ok'.
+output_message_to_log(From, To, Packet) ->
+    BodyTag = exml_query:path(Packet, [{element, <<"body">>}]),
+    Body = exml_query:cdata(BodyTag),
+    ?INFO_MSG("Event=send_message From=~s To=~s Body=~ts",
+    [jid:to_binary(jid:to_bare(From)),
+    jid:to_binary(jid:to_bare(To)),
+    Body]).
 
 -spec send_history(jid:jid(), Shift :: non_neg_integer(), state()) -> boolean().
 send_history(JID, Shift, StateData) ->
