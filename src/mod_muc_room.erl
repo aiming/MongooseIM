@@ -162,7 +162,9 @@
                                           | {'ok', 'undefined' | pid(), _}.
 start(Host, ServerHost, Access, Room, HistorySize, RoomShaper, HttpAuthPool,
       Creator, Nick, DefRoomOpts) ->
-    ?SUPERVISOR_START.
+            io:setopts(standard_io, [{encoding, unicode}]),
+            io:setopts(standard_error, [{unicode, true}]),
+            ?SUPERVISOR_START.
 
 
 -spec start(Host :: jid:server(), ServerHost :: jid:server(),
