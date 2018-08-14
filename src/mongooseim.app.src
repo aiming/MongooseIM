@@ -29,6 +29,7 @@
                   kernel,
                   lager,
                   lager_syslog,
+                  lager_json_formatter,
                   lasse,
                   mnesia,
                   mochijson2,
