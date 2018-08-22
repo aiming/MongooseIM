@@ -276,7 +276,7 @@ init([Host, ServerHost, Access, Room, HistorySize, RoomShaper, HttpAuthPool,
     ?INFO_MSG("Created MUC room ~s@~s by ~s",
               [Room, Host, jid:to_binary(Creator)]),
     add_to_log(room_existence, created, State1),
-    case proplists:get_value(instant, DefRoomOpts, false) of
+    case proplists:get_value(persistent, DefRoomOpts, false) of
         true ->
             %% Instant room -- groupchat 1.0 request
             add_to_log(room_existence, started, State1),
