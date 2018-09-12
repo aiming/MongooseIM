@@ -188,7 +188,7 @@ message(Sender, Recipient, Type, Contents)
     Addresses = address_attributes(Sender, Recipient),
     Attributes = case Type of
                      <<>> -> Addresses;
-                     _ -> [{<<"type">>, Type}|Addresses]
+                     _ -> [{<<"id">>, uuid:uuid_to_string(uuid:get_v4(), binary_standard)}, {<<"type">>, Type}|Addresses]
                  end,
     #xmlel{name = <<"message">>,
            attrs = Attributes,
