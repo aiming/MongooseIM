@@ -2612,10 +2612,11 @@ add_message_to_history(FromNick, FromJID, Packet, StateData) ->
 
 -spec output_message_to_log(jid:jid(), jid:jid(), exml:element()) -> 'ok'.
 output_message_to_log(From, To, Packet) ->
-    BodyTag = exml_query:path(Packet, [{element, <<"body">>}]),
-    Body = exml_query:cdata(BodyTag),
-    ?INFO_MSG("Event=send_message From=~s To=~s Body=~ts",
-    [jid:to_binary(jid:to_bare(From)),
+    StanzaId = exml_query:attr(Packet, <<"id">>),
+    Body = exml_query:path(Packet, [{element, <<"body">>}, cdata]),
+    ?INFO_MSG("Event=send_message Id=~s From=~s To=~s Body=~ts",
+    [StanzaId,
+    jid:to_binary(jid:to_bare(From)),
     jid:to_binary(jid:to_bare(To)),
     Body]).
 
