@@ -443,12 +443,17 @@ normal_state({route, From, <<>>, _Acc,
              StateData) ->
     Lang = xml:get_attr_s(<<"xml:lang">>, Attrs),
     Type = xml:get_attr_s(<<"type">>, Attrs),
-
+    NewPacket = case exml_query:attr(Packet, <<"id">>) of
+                    undefined ->
+                        jlib:add_attr(<<"id">>, uuid:uuid_to_string(uuid:get_v4(), binary_standard), Packet);
+                    _ ->
+                        Packet
+                end,
     NewStateData = route_message(#routed_message{
         allowed = can_send_to_conference(From, StateData),
         type = Type,
         from = From,
-        packet = Packet,
+        packet = NewPacket,
         lang = Lang}, StateData),
     next_normal_state(NewStateData);
 normal_state({route, From, <<>>, Acc0,
