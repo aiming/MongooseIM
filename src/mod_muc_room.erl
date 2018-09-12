@@ -443,12 +443,17 @@ normal_state({route, From, <<>>, _Acc,
              StateData) ->
     Lang = xml:get_attr_s(<<"xml:lang">>, Attrs),
     Type = xml:get_attr_s(<<"type">>, Attrs),
-
+    NewPacket = case exml_query:attr(Packet, <<"id">>) of
+                    undefined ->
+                        jlib:add_attr(<<"id">>, uuid:uuid_to_string(uuid:get_v4(), binary_standard), Packet);
+                    _ ->
+                        Packet
+                end,
     NewStateData = route_message(#routed_message{
         allowed = can_send_to_conference(From, StateData),
         type = Type,
         from = From,
-        packet = Packet,
+        packet = NewPacket,
         lang = Lang}, StateData),
     next_normal_state(NewStateData);
 normal_state({route, From, <<>>, Acc0,
@@ -2607,10 +2612,11 @@ add_message_to_history(FromNick, FromJID, Packet, StateData) ->
 
 -spec output_message_to_log(jid:jid(), jid:jid(), exml:element()) -> 'ok'.
 output_message_to_log(From, To, Packet) ->
-    BodyTag = exml_query:path(Packet, [{element, <<"body">>}]),
-    Body = exml_query:cdata(BodyTag),
-    ?INFO_MSG("Event=send_message From=~s To=~s Body=~ts",
-    [jid:to_binary(jid:to_bare(From)),
+    StanzaId = exml_query:attr(Packet, <<"id">>),
+    Body = exml_query:path(Packet, [{element, <<"body">>}, cdata]),
+    ?INFO_MSG("Event=send_message Id=~s From=~s To=~s Body=~ts",
+    [StanzaId,
+    jid:to_binary(jid:to_bare(From)),
     jid:to_binary(jid:to_bare(To)),
     Body]).
 

@@ -39,6 +39,7 @@
          replace_from_to_attrs/3,
          replace_from_to/3,
          remove_attr/2,
+         add_attr/3,
          iq_query_info/1,
          iq_query_or_response_info/1,
          iq_to_xml/1,
@@ -272,6 +273,11 @@ replace_from_to(From, To, XE = #xmlel{attrs = Attrs}) ->
 -spec remove_attr(binary(), exml:element()) -> exml:element().
 remove_attr(Attr, XE = #xmlel{attrs = Attrs}) ->
     NewAttrs = lists:keydelete(Attr, 1, Attrs),
+    XE#xmlel{attrs = NewAttrs}.
+
+-spec add_attr(binary(), binary(), exml:element()) -> exml:element().
+add_attr(Attr, Value, XE = #xmlel{attrs = Attrs}) ->
+    NewAttrs = [{Attr, Value} | Attrs],
     XE#xmlel{attrs = NewAttrs}.
 
 -spec iq_query_info(exml:element()) -> 'invalid' | 'not_iq' | 'reply' | iq().
