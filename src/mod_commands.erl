@@ -19,7 +19,9 @@
          delete_contact/2,
          subscription/3,
          set_subscription/3,
+         kick_session/1,
          kick_session/3,
+         kick_all_session/1,
          get_recent_messages/3,
          get_recent_messages/4,
          send_message/3
@@ -102,6 +104,16 @@ commands() ->
       {function, kick_session},
       {action, delete},
       {args, [{host, binary}, {user, binary}, {res, binary}]},
+      {result, {msg, binary}}
+     ],
+     [
+      {name, kick_all_user},
+      {category, <<"sessions">>},
+      {desc, <<"Terminate all user connection">>},
+      {module, ?MODULE},
+      {function, kick_all_session},
+      {action, delete},
+      {args, [{host, binary}]},
       {result, {msg, binary}}
      ],
      [
@@ -223,11 +235,17 @@ commands() ->
      ]
     ].
 
+kick_all_session(Host) ->
+    [kick_session(jid:from_binary(JID)) || JID <- list_sessions(Host)].
+
 kick_session(Host, User, Resource) ->
     J = jid:make(User, Host, Resource),
+    kick_session(J).
+
+kick_session(JID) ->
     ejabberd_sm:route(
       jid:make(<<"">>, <<"">>, <<"">>),
-      J,
+      JID,
       {broadcast, {exit, <<"kicked">>}}),
     <<"kicked">>.
 
