@@ -155,6 +155,7 @@ kick_user_from_room(Host, Name, Nick) ->
     %% modules will perform the neccessary checking.
     R = jid:from_binary(room_address(Name, Host)),
     S = room_moderator(R),
+    ?INFO_MSG("S: ~p room users: ~p", [S, room_users(R)]),
     Reason = #xmlel{name = <<"reason">>,
                     children = [ #xmlcdata{ content = reason() } ]
                    },
