@@ -175,6 +175,8 @@ start(Host, ServerHost, Access, Room, HistorySize, RoomShaper, HttpAuthPool,
                                    | {'ok', 'undefined' | pid(), _}.
 start(Host, ServerHost, Access, Room, HistorySize, RoomShaper, HttpAuthPool, Opts)
     when is_list(Opts) ->
+    io:setopts(standard_io, [{encoding, unicode}]),
+    io:setopts(standard_error, [{unicode, true}]),
     Supervisor = gen_mod:get_module_proc(ServerHost, ejabberd_mod_muc_sup),
     supervisor:start_child(Supervisor, [Host, ServerHost, Access, Room,
                                         HistorySize, RoomShaper, HttpAuthPool, Opts]).
