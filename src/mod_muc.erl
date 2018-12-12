@@ -781,7 +781,7 @@ register_room(Host, Room, Pid) ->
                     {exists, R#muc_online_room.pid}
             end
         end,
-    mnesia:async_dirty(F).
+    mnesia:transaction(F).
 
 
 -spec room_jid_to_pid(RoomJID :: jid:jid()) -> {ok, pid()} | {error, not_found}.
