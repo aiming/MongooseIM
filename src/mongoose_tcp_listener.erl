@@ -111,7 +111,7 @@ listen_tcp(PortIPProto, Module, SockOpts, Port, IPS) ->
                        {active, false},
                        {reuseaddr, true},
                        {nodelay, true},
-                       {send_timeout, 120},
+                       {send_timeout, 15000},
                        {keepalive, true},
                        {send_timeout_close, true}],
     FinalSockOpts = override_sock_opts(SockOpts, DefaultSockOpts),
